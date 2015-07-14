@@ -2,10 +2,10 @@ __author__ = 'lighting'
 
 import comtypes
 import comtypes.client
+import numpy
 from ctypes import *
 from comtypes.automation import *
-import sys
-import numpy
+import os
 
 def GetMassDataFromFile(filename):
     RawFile = comtypes.client.CreateObject('MSFileReader.XRawfile')
@@ -75,6 +75,7 @@ def GetAvMassSpecFromFile(filename):
         )
 
     MassList = numpy.array(MassList.value)
+    RawFile.close()
     return MassList
 
 def GetPeakValueFromMassData(MassData,peak = 178.08):
@@ -91,12 +92,30 @@ def GetIntegratedIntensityFromMassData(MassData):
     y = MassData[1,:]
     return numpy.trapz(y,x)
 
+def TraverseFiles(Path,func):
+    files = os.listdir(Path)
+    for filename in files:
+        func(filename)
+    return 0
 
 if __name__ == '__main__':
 
-    filename = '140426.raw'
-    MassList = GetAvMassSpecFromFile(filename)
-    PeakValue = GetPeakValueFromMassData(MassList, 178.08)
-    IntegratedIntensity = GetIntegratedIntensityFromMassData(MassList)
-    print(PeakValue)
-    print(IntegratedIntensity)
+    Path = os.getcwd()
+    Files = os.listdir(Path)
+
+    OutFile = open('result.txt','w')
+
+    for filename in Files:
+        if filename.find('.raw') == -1:
+            continue
+        underline = filename.find('_')
+        if underline != -1:
+            name = filename[0:underline]
+        else:
+            name = filename[0:-4]
+        MassList = GetAvMassSpecFromFile(filename)
+        PeakValue = GetPeakValueFromMassData(MassList, 178.08)
+
+        OutFile.write(name + '\t' + str(PeakValue) + '\n')
+
+    OutFile.close()
