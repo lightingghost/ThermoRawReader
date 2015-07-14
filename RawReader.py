@@ -81,9 +81,10 @@ def GetAvMassSpecFromFile(filename):
 def GetPeakValueFromMassData(MassData,peak = 178.08):
     min = peak - 0.005
     max = peak + 0.005
-    rng = [(MassData[0]>=min)&(MassData[0]<=max)]
-    dataout = numpy.array((MassData[0][rng],MassData[1][rng])).transpose()
-    intensity = dataout[:,1]
+    intensity = numpy.array([])
+    for i in range(int(MassData.size/2)):
+        if (MassData[0,i] >= min) & (MassData[0,i] <= max):
+            intensity = numpy.append(intensity,MassData[1,i])
     PeakValue = intensity.max()
     return PeakValue
 
