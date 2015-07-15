@@ -26,7 +26,7 @@ def GetMassDataFromFile(filename):
     MassList = VARIANT()
     PeakFlags = VARIANT()
     ArraySize = c_long()
-
+    MassData = numpy.array([])
 
     for ScanNum in range(1,NumSpectra.value+1):
         RawFile.GetMassListFromScanNum(
@@ -41,9 +41,13 @@ def GetMassDataFromFile(filename):
             PeakFlags,
             ArraySize
             )
+        if ScanNum == 1:
+            MassData = numpy.array(MassList.value)
+        else:
+            MassData = numpy.add(MassData,MassList.value)
 
-        MassList = numpy.array(MassList.value)
-        return MassList
+    MassData = MassData/NumSpectra.value
+    return MassData
 
 def GetAvMassSpecFromFile(filename):
     RawFile = comtypes.client.CreateObject('MSFileReader.XRawfile')
@@ -78,6 +82,57 @@ def GetAvMassSpecFromFile(filename):
     RawFile.close()
     return MassList
 
+def GetAvMassListFromFile(filename):
+    RawFile = comtypes.client.CreateObject('MSFileReader.XRawfile')
+    try:
+        RawFile.open(filename)
+    except:
+        pass
+    RawFile.SetCurrentController(0,1)
+    NumSpectra = c_long()
+    RawFile.GetNumSpectra(NumSpectra)
+    ScanNum = NumSpectra.value
+
+    # set up values for MSFileReader.GetAverageMassList:
+    FirstAvgScanNumber = 1
+    LastAvgScanNumber = ScanNum
+    FirstBkg1ScanNumber = 0
+    LastBkg1ScanNumber = 0
+    FirstBkg2ScanNumber = 0
+    LastBkg2ScanNumber = 0
+    Filter = u''
+    IntensityCutoffType = 0
+    IntensityCutoffValue = 0
+    MaxNumberOfPeaks = 0
+    CentroidResult = False
+    CentroidPeakWidth = c_double()
+    MassList = VARIANT()
+    PeakFlags = VARIANT()
+    ArraySize = c_long()
+
+    # Attention!!! The Parameters of the function in MSFileReader-30-SP1-Ref is wrong!!!
+    RawFile.GetAverageMassList(
+        c_long(FirstAvgScanNumber),
+        c_long(LastAvgScanNumber),
+        c_long(FirstBkg1ScanNumber),
+        c_long(LastBkg1ScanNumber),
+        c_long(FirstBkg2ScanNumber),
+        c_long(LastBkg2ScanNumber),
+        Filter,
+        c_long(IntensityCutoffType),
+        c_long(IntensityCutoffValue),
+        c_long(MaxNumberOfPeaks),
+        CentroidResult,
+        CentroidPeakWidth,
+        MassList,
+        PeakFlags,
+        ArraySize
+        )
+
+    MassList = numpy.array(MassList.value)
+    RawFile.close()
+    return MassList
+
 def GetPeakValueFromMassData(MassData,peak = 178.08):
     min = peak - 0.005
     max = peak + 0.005
@@ -85,6 +140,8 @@ def GetPeakValueFromMassData(MassData,peak = 178.08):
     for i in range(int(MassData.size/2)):
         if (MassData[0,i] >= min) & (MassData[0,i] <= max):
             intensity = numpy.append(intensity,MassData[1,i])
+    if intensity.size == 0:
+        return 0
     PeakValue = intensity.max()
     return PeakValue
 
@@ -114,7 +171,7 @@ if __name__ == '__main__':
             name = filename[0:underline]
         else:
             name = filename[0:-4]
-        MassList = GetAvMassSpecFromFile(filename)
+        MassList = GetAvMassListFromFile(filename)
         PeakValue = GetPeakValueFromMassData(MassList, 178.08)
 
         OutFile.write(name + '\t' + str(PeakValue) + '\n')
