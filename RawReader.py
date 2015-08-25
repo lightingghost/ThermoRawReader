@@ -7,7 +7,9 @@ from ctypes import *
 from comtypes.automation import *
 import os
 
-def GetMassDataFromFile(filename):
+def GetNumSpectra(file )
+
+def GetMassDataFromFile(filename,ScanNum):
     RawFile = comtypes.client.CreateObject('MSFileReader.XRawfile')
     try:
         RawFile.open(filename)
@@ -26,27 +28,21 @@ def GetMassDataFromFile(filename):
     MassList = VARIANT()
     PeakFlags = VARIANT()
     ArraySize = c_long()
-    MassData = numpy.array([])
 
-    for ScanNum in range(1,NumSpectra.value+1):
-        RawFile.GetMassListFromScanNum(
-            c_long(ScanNum),
-            Filter,
-            c_long(IntensityCutoffType),
-            c_long(IntensityCutoffValue),
-            c_long(MaxNumberOfPeaks),
-            c_long(CentroidResult),
-            c_double(0),
-            MassList,
-            PeakFlags,
-            ArraySize
-            )
-        if ScanNum == 1:
-            MassData = numpy.array(MassList.value)
-        else:
-            MassData = numpy.add(MassData,MassList.value)
-
-    MassData = MassData/NumSpectra.value
+    RawFile.GetMassListFromScanNum(
+        c_long(ScanNum),
+        Filter,
+        c_long(IntensityCutoffType),
+        c_long(IntensityCutoffValue),
+        c_long(MaxNumberOfPeaks),
+        c_long(CentroidResult),
+        c_double(0),
+        MassList,
+        PeakFlags,
+        ArraySize
+    )
+    MassData = numpy.array(MassList.value)
+    RawFile.Close()
     return MassData
 
 def GetAvMassSpecFromFile(filename):
@@ -79,7 +75,7 @@ def GetAvMassSpecFromFile(filename):
         )
 
     MassList = numpy.array(MassList.value)
-    RawFile.close()
+    RawFile.Close()
     return MassList
 
 def GetAvMassListFromFile(filename):
@@ -130,7 +126,7 @@ def GetAvMassListFromFile(filename):
         )
 
     MassList = numpy.array(MassList.value)
-    RawFile.close()
+    RawFile.Close()
     return MassList
 
 def GetPeakValueFromMassData(MassData,peak = 178.08):
@@ -171,7 +167,7 @@ if __name__ == '__main__':
             name = filename[0:underline]
         else:
             name = filename[0:-4]
-        MassList = GetAvMassListFromFile(filename)
+        MassList = GetMassDataFromFile(filename,1)
         PeakValue = GetPeakValueFromMassData(MassList, 178.08)
 
         OutFile.write(name + '\t' + str(PeakValue) + '\n')
