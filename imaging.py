@@ -29,7 +29,7 @@ class Image:
         import thermo_raw_reader as reader
 
         files = os.listdir(path)
-        y = 0
+        x = 0
         for filename in files:
             if filename.find('.raw') == -1:
                 continue
@@ -38,10 +38,10 @@ class Image:
             scan_num = rawfile.get_num_spectra()
             if scan_num < self.length:
                 print('Not Enough Data Points')
-            for x in range(self.length):
-                mass_data = rawfile.get_mass_list(x + 1)
+            for y in range(self.length):
+                mass_data = rawfile.get_mass_list(y + 1)
                 self.image_data[x, y] = mass_data
-            y = y + 1
+            x = x + 1
 
     def save_image_data(self, path):
         filepath = path + 'image_data.npy'
@@ -51,7 +51,6 @@ class Image:
         self.image_data = numpy.load(filepath)
 
     def get_image(self, peak):
-
         for x in range(self.length):
             for y in range(self.width):
                 self.ms_image[x, y] = get_peak_value_from_mass_data(self.image_data[x, y])
@@ -60,6 +59,7 @@ class Image:
 
     def plot_image(self, method='contour'):
         import matplotlib.pyplot as plt
+
         x = range(self.length)
         y = range(self.width)
         max = self.ms_image.max()

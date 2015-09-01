@@ -50,12 +50,11 @@ class RawFile:
         MassData = numpy.array(MassList.value)
         return MassData
 
-    def get_average_mass_list(self):
-        scan_num = self.get_num_spectra()
+    def get_average_mass_list(self, start=1, end=1):
 
         # set up values for MSFileReader.GetAverageMassList:
-        FirstAvgScanNumber = 1
-        LastAvgScanNumber = scan_num
+        FirstAvgScanNumber = start
+        LastAvgScanNumber = end
         FirstBkg1ScanNumber = 0
         LastBkg1ScanNumber = 0
         FirstBkg2ScanNumber = 0
