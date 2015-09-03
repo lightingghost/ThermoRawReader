@@ -50,8 +50,7 @@ class Image:
         return self.image_data
 
     def save_image_data(self, path):
-        filepath = path + 'image_data.npy'
-        numpy.save(filepath, self.image_data)
+        numpy.save(path, self.image_data)
 
     def load_image_data(self, filepath):
         self.image_data = numpy.load(filepath)
@@ -81,7 +80,7 @@ if __name__ == '__main__':
 
     image = Image(length, width)
     #image.load_raw(path)
-    #image.save_image_data(path)
+    #image.save_image_data(path+'image_data.npy')
     image_data = image.load_image_data(path+'image_data.npy')
     image.get_image(195.09)
     image.plot_image()
