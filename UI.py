@@ -103,7 +103,7 @@ class ImgProc(tk.Frame):
         filepath = filedialog.asksaveasfile(mode='w',defaultextension='.npy')
         if filepath == None:
             return
-        self.image.save_image_data(filepath)
+        self.image.save_image_data(filepath.name)
 
     def plot_image(self):
         peak = float(self.entry_peak.get())

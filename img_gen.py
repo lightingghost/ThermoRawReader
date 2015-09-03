@@ -20,7 +20,7 @@ def get_peak_value_from_mass_data(MassData, peak):
 
 
 class Image:
-    def __init__(self, length, width):
+    def __init__(self, length=10, width=10):
         self.length = length
         self.width = width
         self.image_data = numpy.empty((self.length, self.width), dtype=numpy.ndarray)
