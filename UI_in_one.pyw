@@ -5,7 +5,6 @@ import comtypes.client
 import numpy
 import os
 import tkinter as tk
-import matplotlib.pyplot as plt
 from tkinter import filedialog
 from ctypes import *
 from comtypes.automation import *
@@ -155,7 +154,7 @@ class Image:
         return self.ms_image
 
     def plot_image(self, method='contour'):
-        #import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt
         x = range(self.length)
         y = range(self.width)
         max = self.ms_image.max()
