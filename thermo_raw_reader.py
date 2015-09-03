@@ -35,7 +35,7 @@ class RawFile:
         PeakFlags = VARIANT()
         ArraySize = c_long()
 
-        self.DLL.GetMassListFromScanNum(
+        code = self.DLL.GetMassListFromScanNum(
             c_long(scan_num),
             Filter,
             c_long(IntensityCutoffType),
@@ -47,6 +47,7 @@ class RawFile:
             PeakFlags,
             ArraySize
         )
+
         MassData = numpy.array(MassList.value)
         return MassData
 
@@ -109,8 +110,8 @@ def get_peak_value_from_mass_data(MassData,peak = 178.08):
 if __name__ == '__main__':
 
     Path = os.getcwd()
-    Files = os.listdir(Path)
-    OutFile = open('result.txt','w')
+    Files = ('Caffeine_01.raw',)
+    OutFile = open('test.txt','w')
     for filename in Files:
         if filename.find('.raw') == -1:
             continue
@@ -122,10 +123,13 @@ if __name__ == '__main__':
 
         raw = RawFile(filename)
         scan_num = raw.get_num_spectra()
-        MassList = raw.get_average_mass_list()
-        PeakValue = get_peak_value_from_mass_data(MassList, 178.08)
-
-        OutFile.write(name + '\t' + str(scan_num) + '\t' + str(PeakValue) + '\n')
+        for j in range(scan_num):
+            MassList = raw.get_mass_list(j+1)
+            PeakValue = get_peak_value_from_mass_data(MassList, 195.09)
+            OutFile.write(str(PeakValue))
+            OutFile.write('\n')
+            #for i in range(int(MassList.size/2)):
+            #    OutFile.write(str(MassList[0,i]) + '\t' + str(MassList[1,i]) + '\n')
         raw.close()
 
     OutFile.close()

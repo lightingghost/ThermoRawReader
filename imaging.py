@@ -4,7 +4,7 @@ import numpy
 import os
 
 
-def get_peak_value_from_mass_data(MassData, peak=178.08):
+def get_peak_value_from_mass_data(MassData, peak):
     min = peak - 0.005
     max = peak + 0.005
     intensity = numpy.array([])
@@ -12,8 +12,10 @@ def get_peak_value_from_mass_data(MassData, peak=178.08):
         if (MassData[0, i] >= min) & (MassData[0, i] <= max):
             intensity = numpy.append(intensity, MassData[1, i])
     if intensity.size == 0:
+        #print(0)
         return 0
     peak_value = intensity.max()
+    #print(peak_value)
     return peak_value
 
 
@@ -29,8 +31,10 @@ class Image:
         import thermo_raw_reader as reader
 
         files = os.listdir(path)
-        x = 0
+
+        y = 0
         for filename in files:
+
             if filename.find('.raw') == -1:
                 continue
             filepath = path + filename
@@ -38,10 +42,12 @@ class Image:
             scan_num = rawfile.get_num_spectra()
             if scan_num < self.length:
                 print('Not Enough Data Points')
-            for y in range(self.length):
-                mass_data = rawfile.get_mass_list(y + 1)
+            for x in range(self.length):
+                mass_data = rawfile.get_mass_list(x + 1)
                 self.image_data[x, y] = mass_data
-            x = x + 1
+            y = y + 1
+            rawfile.close()
+        return self.image_data
 
     def save_image_data(self, path):
         filepath = path + 'image_data.npy'
@@ -49,17 +55,16 @@ class Image:
 
     def load_image_data(self, filepath):
         self.image_data = numpy.load(filepath)
+        return self.image_data
 
     def get_image(self, peak):
-        for x in range(self.length):
-            for y in range(self.width):
-                self.ms_image[x, y] = get_peak_value_from_mass_data(self.image_data[x, y])
-
+        for y in range(self.length):
+            for x in range(self.width):
+                self.ms_image[x, y] = get_peak_value_from_mass_data(self.image_data[x, y],peak)
         return self.ms_image
 
     def plot_image(self, method='contour'):
         import matplotlib.pyplot as plt
-
         x = range(self.length)
         y = range(self.width)
         max = self.ms_image.max()
@@ -70,13 +75,13 @@ class Image:
 
 
 if __name__ == '__main__':
-    length = 20
-    width = 20
-    path = 'D:\\Documents\\MyDocuments\\Project\\Py\\ThermoRawReader\\test\\'
+    length = 60
+    width = 60
+    path = 'D:\\Documents\\MyDocuments\\Zare\\Imaging\\08272015\\'
 
     image = Image(length, width)
     #image.load_raw(path)
     #image.save_image_data(path)
-    image.load_image_data(path+'image_data.npy')
-    image.get_image(178)
+    image_data = image.load_image_data(path+'image_data.npy')
+    image.get_image(195.09)
     image.plot_image()
