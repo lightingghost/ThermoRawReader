@@ -7,13 +7,13 @@ MSFileReader by Thermo,
 numpy, ctypes, matplotlib,
 
 could be installed by pip:
-
+<code>
 pip install numpy
 
 pip install ctypes
 
 pip install matplotlib
-
+</code>
 or follow the instructions below:
 
 numpy:
