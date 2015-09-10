@@ -10,7 +10,9 @@ could be installed by pip:
 
 <code>
 pip install numpy
+
 pip install ctypes
+
 pip install matplotlib
 </code>
 
