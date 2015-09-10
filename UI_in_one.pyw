@@ -179,12 +179,14 @@ class ImgProc(tk.Frame):
 
         self.entry_width = tk.Entry(self.frame_dim)
         self.entry_width.place(x=140, y=10, height=20, width=60)
+        self.entry_width.insert(0,'60')
 
         self.label_length = tk.Label(self.frame_dim, text='Length(Num Files)')
         self.label_length.place(x=285, y=10, height=20, width=150)
 
         self.entry_length = tk.Entry(self.frame_dim)
         self.entry_length.place(x=440, y=10, height=20, width=60)
+        self.entry_width.insert(0,'60')
 
 
         #Frame 1
