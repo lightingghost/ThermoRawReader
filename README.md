@@ -6,6 +6,8 @@ Requires:
 MSFileReader by Thermo,
 numpy, ctypes, matplotlib,
 
+Prior to using ThermoRawFileReaderDLL.dll you must download and install the MSFileReader by creating an account at https://thermo.flexnetoperations.com/control/thmo/login, then logging in and choosing "Utility Software". 
+
 could be installed by pip:
 
 <code>
@@ -34,5 +36,6 @@ matplotlib:
 
 http://matplotlib.org/downloads.html
 
-It goes over all the raw files in the directory, then out put the peakvalue for a specific m/z to a single file
+
+execute the UI_in_one.pyw to launch the main program for Mass Spec Imaging
 
