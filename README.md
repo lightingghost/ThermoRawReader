@@ -11,9 +11,11 @@ could be installed by pip:
 <code>
 pip install numpy
 </code>
+
 <code>
 pip install ctypes
 </code>
+
 <code>
 pip install matplotlib
 </code>
